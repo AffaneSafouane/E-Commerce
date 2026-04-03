@@ -1,0 +1,24 @@
+<nav class="navbar navbar-expand-lg sticky-top bg-dark-subtle mb-3" id="mainNav">
+	<div class="container px-4">
+		<a class="navbar-brand" href="{{ path('app_home') }}">LookUp</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarResponsive">
+			<ul class="navbar-nav ms-auto">
+				{% if app.user %}
+					<li class="nav-item">
+						<a class="nav-link" href="{{ path('app_profil_show', {'id': app.user.id}) }}">Profil</a>
+					</li>
+					<li>
+						<a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
+					</li>
+				{% else %}
+					<li>
+						<a class="btn btn-primary" href="{{ path('app_login') }}">Connexion</a>
+					</li>
+				{% endif %}
+			</li>
+		</ul>
+	</div>
+</div></nav>

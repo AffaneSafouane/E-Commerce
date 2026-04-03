@@ -3,25 +3,31 @@
 {% block title %}Inscription{% endblock %}
 
 {% block body %}
-    <h1>Inscription</h1>
+    <section class="container py-4 px-4 w-50">
+        <h1>Inscription</h1>
 
-    {{ form_errors(registrationForm) }}
+        {% if registrationForm.vars.errors|length > 0 %}
+            <div class="alert alert-danger mb-3 mt-3">
+                {{ form_errors(registrationForm) }}
+            </div>
+        {% endif %}
 
-    {{ form_start(registrationForm) }}
-        
-        {{ form_row(registrationForm.firstName) }}
-        {{ form_row(registrationForm.name) }}
-        
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.phone) }}
+        {{ form_start(registrationForm) }}
+            
+            {{ form_row(registrationForm.firstName) }}
+            {{ form_row(registrationForm.name) }}
+            
+            {{ form_row(registrationForm.email) }}
+            {{ form_row(registrationForm.phone) }}
 
-        {{ form_row(registrationForm.deliveryAddress) }}
+            {{ form_row(registrationForm.deliveryAddress) }}
 
-        {{ form_row(registrationForm.plainPassword) }}
+            {{ form_row(registrationForm.plainPassword) }}
 
-        {{ form_row(registrationForm.agreeTerms) }}
+            {{ form_row(registrationForm.agreeTerms) }}
 
-        <button type="submit" class="btn">S'inscrire</button>
-        
-    {{ form_end(registrationForm) }}
+            <button type="submit" class="btn btn-primary mt-3">S'inscrire</button>
+            
+        {{ form_end(registrationForm) }}
+    </section>
 {% endblock %}
