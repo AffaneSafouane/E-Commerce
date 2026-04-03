@@ -17,7 +17,7 @@ class Media
     #[ORM\Column(enumType: MediaType::class)]
     private ?MediaType $type = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $path = null;
 
     #[ORM\Column(length: 255, nullable: true)]

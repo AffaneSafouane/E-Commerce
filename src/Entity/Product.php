@@ -43,10 +43,17 @@ class Product
     #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'product')]
     private Collection $media;
 
+    /**
+     * @var Collection<int, OrderLine>
+     */
+    #[ORM\OneToMany(targetEntity: OrderLine::class, mappedBy: 'product', orphanRemoval: true)]
+    private Collection $productOrderLine;
+
     public function __construct()
     {
         $this->orders = new ArrayCollection();
         $this->media = new ArrayCollection();
+        $this->productOrderLine = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -162,6 +169,36 @@ class Product
             // set the owning side to null (unless already changed)
             if ($medium->getProduct() === $this) {
                 $medium->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrderLine>
+     */
+    public function getProductOrderLine(): Collection
+    {
+        return $this->productOrderLine;
+    }
+
+    public function addProductOrderLine(OrderLine $productOrderLine): static
+    {
+        if (!$this->productOrderLine->contains($productOrderLine)) {
+            $this->productOrderLine->add($productOrderLine);
+            $productOrderLine->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductOrderLine(OrderLine $productOrderLine): static
+    {
+        if ($this->productOrderLine->removeElement($productOrderLine)) {
+            // set the owning side to null (unless already changed)
+            if ($productOrderLine->getProduct() === $this) {
+                $productOrderLine->setProduct(null);
             }
         }
 
