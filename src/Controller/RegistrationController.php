@@ -22,6 +22,31 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $deliveryAddress = $form->get('deliveryAddress')->getData();
+            $deliveryAddress->setUser($user);
+            $deliveryAddress->setIsDelivery(true);
+
+            $isSameAsDelivery = $form->get('sameAsDelivery')->getData();
+            $billingAddress = $form->get('billingAddress')->getData();
+
+            if ($isSameAsDelivery === true || ($billingAddress === null || $billingAddress->getCity() === null)) {
+                $deliveryAddress->setIsBilling(true);
+                $entityManager->persist($deliveryAddress);
+            } else {
+                $deliveryAddress->setIsBilling(false);
+                $entityManager->persist($deliveryAddress);
+
+                $billingAddress = $form->get('billingAddress')->getData();
+
+                if ($billingAddress && $billingAddress->getCity() !== null) {
+                    $billingAddress->setUser($user);
+                    $billingAddress->setIsDelivery(false);
+                    $billingAddress->setIsBilling(true);
+
+                    $entityManager->persist($billingAddress);
+                }
+            }
+
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
@@ -31,7 +56,7 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // do anything else you need here, like send an email
+            $this->addFlash('success','Votre compte a bien été créé');
 
             return $security->login($user, 'form_login', 'main');
         }

@@ -89,6 +89,17 @@ class RegistrationFormType extends AbstractType
                 'mapped' => false,
                 'label' => 'Adresse de livraison',
             ])
+            ->add('sameAsDelivery', CheckboxType::class, [
+                'mapped' => false,
+                'label' => 'Utiliser la même adresse pour la facturation',
+                'required' => false,
+                'data' => true, // Cochée par défaut
+            ])
+            ->add('billingAddress', CustomerAddressType::class, [
+                'mapped' => false,
+                'required' => false,
+                'label' => 'Adresse de facturation',
+            ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [

@@ -3,29 +3,20 @@
 namespace App\Form;
 
 use App\Entity\CustomerAddress;
-use App\Entity\User;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class CustomerAddressType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('type', ChoiceType::class, [
-                'choices' => [
-                    'Livraison' => 'Delivery',
-                    'Facturation' => 'Billing',
-                ],
-                'data' => 'Delivery', // Par défaut "Livraison" pour l'inscription
-            ])
             ->add('firstName', TextType::class, [
                 'constraints' => [
                     new NotBlank(message: 'Veuillez entrer un prénom pour la livraison')
@@ -39,7 +30,13 @@ class CustomerAddressType extends AbstractType
                 'label' => 'Nom',
             ])
             ->add('phone', TelType::class, [
-                'required' => false,
+                'constraints' => [
+                    new NotBlank(message: 'Veuillez entrer un numéro de téléphone pour la livraison'),
+                    new Regex(
+                        pattern: '/^\+[1-9]\d{7,12}$/',
+                        message: 'Veuillez entrer un numéro de téléphone valide'
+                    )
+                ],
                 'label' => 'Téléphone',
             ])
             ->add('address', TextType::class, [

@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription{% endblock %}
+{% block title %}
+    Inscription
+{% endblock %}
 
 {% block body %}
     <section class="container py-4 px-4 w-50">
@@ -13,21 +15,51 @@
         {% endif %}
 
         {{ form_start(registrationForm) }}
-            
-            {{ form_row(registrationForm.firstName) }}
-            {{ form_row(registrationForm.name) }}
-            
-            {{ form_row(registrationForm.email) }}
-            {{ form_row(registrationForm.phone) }}
 
-            {{ form_row(registrationForm.deliveryAddress) }}
+        {{ form_row(registrationForm.firstName) }}
+        {{ form_row(registrationForm.name) }}
 
-            {{ form_row(registrationForm.plainPassword) }}
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.phone) }}
 
-            {{ form_row(registrationForm.agreeTerms) }}
+        {{ form_row(registrationForm.deliveryAddress) }}
 
-            <button type="submit" class="btn btn-primary mt-3">S'inscrire</button>
-            
+        {{ form_row(registrationForm.sameAsDelivery) }}
+
+        <div id="billing-address-container" style="display: none;">
+            {{ form_row(registrationForm.billingAddress) }}
+        </div>
+
+        {{ form_row(registrationForm.plainPassword) }}
+
+        {{ form_row(registrationForm.agreeTerms) }}
+
+        <button type="submit" class="btn btn-primary mt-3">S'inscrire</button>
+
         {{ form_end(registrationForm) }}
     </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sameAsDeliveryCheckbox = document.getElementById('registration_form_sameAsDelivery');
+
+            const billingAddressContainer = document.getElementById('billing-address-container');
+
+            function toggleBillingAddressFields() {
+                if (sameAsDeliveryCheckbox.checked) {
+                    billingAddressContainer.style.display = 'none';
+                    } else {
+                    billingAddressContainer.style.display = 'block';
+                }
+            }
+
+            if (sameAsDeliveryCheckbox) {
+                toggleBillingAddressFields();
+
+                sameAsDeliveryCheckbox.addEventListener('change', toggleBillingAddressFields);
+                } else {
+                console.error("Attention : l'ID de la checkbox n'a pas été trouvé. Inspectez la page avec F12 pour trouver le bon ID !");
+            }
+        });
+    </script>
 {% endblock %}

@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Enum\AddressType;
 use App\Repository\CustomerAddressRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,8 +13,11 @@ class CustomerAddress
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(enumType: AddressType::class)]
-    private ?AddressType $type = null;
+    #[ORM\Column]
+    private ?bool $isDelivery = true;
+
+    #[ORM\Column]
+    private ?bool $isBilling = false;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -23,7 +25,7 @@ class CustomerAddress
     #[ORM\Column(length: 255)]
     private ?string $firstName = null;
 
-    #[ORM\Column(length: 12)]
+    #[ORM\Column(length: 15)]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255)]
@@ -47,14 +49,26 @@ class CustomerAddress
         return $this->id;
     }
 
-    public function getType(): ?AddressType
+    public function getIsDelivery(): ?bool
     {
-        return $this->type;
+        return $this->isDelivery;
     }
 
-    public function setType(AddressType $type): static
+    public function setIsDelivery(?bool $isDelivery): static
     {
-        $this->type = $type;
+        $this->isDelivery = $isDelivery;
+
+        return $this;
+    }
+
+    public function getIsBilling(): ?bool
+    {
+        return $this->isBilling;
+    }
+
+    public function setIsBilling(?bool $isBilling): static
+    {
+        $this->isBilling = $isBilling;
 
         return $this;
     }
