@@ -30,7 +30,7 @@ class Category
     /**
      * @var Collection<int, Media>
      */
-    #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'category')]
+    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'categories', cascade: ['persist'])]
     private Collection $media;
 
     public function __construct()
@@ -110,7 +110,7 @@ class Category
     {
         if (!$this->media->contains($medium)) {
             $this->media->add($medium);
-            $medium->setCategory($this);
+            $medium->addCategory($this);
         }
 
         return $this;
@@ -120,11 +120,30 @@ class Category
     {
         if ($this->media->removeElement($medium)) {
             // set the owning side to null (unless already changed)
-            if ($medium->getCategory() === $this) {
-                $medium->setCategory(null);
+            if ($medium->getCategories()->contains($this)) {
+                $medium->removeCategory($this);
             }
         }
 
         return $this;
+    }
+
+    public function __tostring(): string
+    {
+        return $this->getName() ?? '';
+    }
+
+    /**
+     * Get the path of the first PHOTO media, or a placeholder image if none exists.
+     */
+    public function getFirstPhotoPath(): ?string
+    {
+        foreach ($this->media as $medium) {
+            if ($medium->getType() === \App\Enum\MediaType::PHOTO) {
+                return '/uploads/media/' . $medium->getPath();
+            }
+        }
+
+        return '/images/placeholder.webp';
     }
 }

@@ -1,0 +1,23 @@
+{% for item in media_collection %}
+    <div class="media-wrapper mb-3">
+        {% if item.type.value == 'PHOTO' %}
+            <img src="{{ asset('uploads/images/' ~ item.path) }}" alt="{{ item.alt }}" class="img-fluid rounded shadow">
+        {% elseif item.type.value == 'VIDEO' %}
+            <video controls class="w-100 rounded shadow">
+                <source src="{{ asset('uploads/images/' ~ item.path) }}" type="video/mp4">
+            </video>
+        {% elseif item.type.value == 'AUDIO' %}
+            <div class="audio-card p-3 glass-panel">
+                <audio controls class="w-100">
+                    <source src="{{ asset('uploads/images/' ~ item.path) }}" type="audio/mpeg">
+                </audio>
+            </div>
+        {% endif %}
+    </div>
+{% else %}
+    {# THIS IS WHERE YOUR PLACEHOLDER GOES FOR THE FRONTEND #}
+    <div class="media-wrapper mb-3 text-center">
+        <img src="data:image/svg+xml;base64,PHN2ZyB3..." class="img-fluid rounded opacity-50" style="max-width: 200px;">
+        <p class="text-light-emphasis small mt-2">Aucun média disponible pour cet astre.</p>
+    </div>
+{% endfor %}

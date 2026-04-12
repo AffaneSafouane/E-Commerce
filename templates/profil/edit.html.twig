@@ -5,13 +5,12 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Modifier profil</h1>
+    <a href="{{ path('app_profil_show') }}"><- Retour</a>
+
+    <h1 class="mt-3">Modifier profil</h1>
 
     {{ include('profil/_form.html.twig', {'button_label': 'Modifier'}) }}
 
-    <a href="{{ path('app_profil_show') }}">Retour au profil</a>
-
-    {{ include('profil/_delete_form.html.twig') }}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

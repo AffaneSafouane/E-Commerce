@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Nos Catégories - Look Up
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .catalog-hero {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(173, 220, 255, 0.16);
+            border-radius: 1.25rem;
+            background:
+            radial-gradient(circle at 12% 15%, rgba(132, 219, 255, 0.2), transparent 32%),
+            radial-gradient(circle at 95% 5%, rgba(255, 208, 126, 0.2), transparent 30%),
+            linear-gradient(150deg, #04101c 0%, #0b2035 46%, #163b5b 100%);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.32);
+        }
+
+        .catalog-hero::before,
+        .catalog-hero::after {
+            content: '';
+            position: absolute;
+            border-radius: 999px;
+            pointer-events: none;
+        }
+
+        .catalog-hero::before {
+            width: 19rem;
+            height: 19rem;
+            right: -8rem;
+            top: -8rem;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.25), transparent 64%);
+        }
+
+        .catalog-hero::after {
+            width: 14rem;
+            height: 14rem;
+            left: -6rem;
+            bottom: -6rem;
+            background: radial-gradient(circle, rgba(132, 219, 255, 0.23), transparent 68%);
+        }
+
+        .category-card {
+            background: rgba(7, 20, 36, 0.85);
+            border: 1px solid rgba(173, 220, 255, 0.14);
+            border-radius: 1rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(173, 220, 255, 0.32);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .btn-stargaze {
+            background: linear-gradient(90deg, #86ebff 0%, #ffd795 100%);
+            border: none;
+            color: #072038;
+            font-weight: 700;
+        }
+
+        .btn-stargaze:hover,
+        .btn-stargaze:focus-visible {
+            color: #04101c;
+            filter: brightness(1.03);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <section class="catalog-hero p-4 p-md-5 text-light mb-4">
+        <div class="position-relative" style="z-index: 1;">
+            <p class="text-uppercase fw-semibold small mb-2" style="letter-spacing: 0.1em; color: #9ad9ff;">Univers Look Up</p>
+            <h1 class="display-6 fw-bold mb-2">Nos Catégories</h1>
+            <p class="mb-0 text-light-emphasis">Explorez chaque univers et trouvez l'équipement parfait pour vos prochaines observations.</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-xl-3">
+            {% for category in categories %}
+                <div class="col d-flex">
+                    <article class="category-card p-4 d-flex flex-column w-100 text-light">
+                        {% set mainMedia = category.media|first %}
+                        {% if mainMedia %}
+                            <img src="{{ asset('/uploads/media/' ~ mainMedia.path) }}"
+                                alt="{{ mainMedia.alt ?: category.name }}"
+                                class="w-100"
+                                style="height: 200px; object-fit: cover; border-bottom: 1px solid rgba(173, 220, 255, 0.14);">
+                            {% else %}
+                                <div class="w-100 d-flex align-items-center justify-content-center bg-dark" style="height: 200px; border-bottom: 1px solid rgba(173, 220, 255, 0.14);">
+                                    <span class="text-secondary">Image non disponible</span>
+                                </div>
+                            {% endif %}
+
+                            <h2 class="h4 fw-bold mb-3">{{ category.name }}</h2>
+                            <p class="text-light-emphasis flex-grow-1 mb-4">{{ category.description|striptags }}</p>
+                            <a class="btn btn-stargaze mt-auto" href="{{ path('catalog_category', { id: category.id }) }}">
+                                Voir les produits
+                            </a>
+                        </article>
+                    </div>
+                {% else %}
+                    <div class="col-12">
+                        <div class="alert alert-dark border border-secondary-subtle mb-0" role="alert">
+                            Aucune catégorie n'est disponible pour le moment.
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endblock %}

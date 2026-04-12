@@ -1,25 +1,163 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Panier{% endblock %}
+{% block title %}
+    Votre Panier | Look Up
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .cart-container {
+            min-height: 80vh;
+            color: #f1f8ff;
+        }
+
+        .glass-panel {
+            background: rgba(13, 31, 51, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(142, 212, 255, 0.2);
+            border-radius: 1.25rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .cart-item {
+            transition: background 0.3s ease;
+            border-bottom: 1px solid rgba(142, 212, 255, 0.1);
+        }
+
+        .cart-item:last-child { border-bottom: none; }
+
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid rgba(142, 212, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: #8ed4ff;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: #8ed4ff;
+            color: #031223;
+        }
+
+        .summary-total {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #7ceeff, #ffe08c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-checkout {
+            background: linear-gradient(90deg, #7ceeff 0%, #ffe08c 100%);
+            color: #072038;
+            font-weight: 800;
+            border: none;
+            padding: 1rem;
+            border-radius: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-checkout:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-<div class="example-wrapper">
-    <h1>Votre panier</h1>
+    <div class="container cart-container py-5">
+        <h1 class="astro-title mb-5">Votre Panier</h1>
 
-    <table>
-        {# Loop through the 'cart' array. For each item, display product name, quantity, unit price, and total line price. #}
-        {% for item in items %}
-            <tr>
-                <td>{{ item.product.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.product.price }}</td>
-                <td>{{ item.quantity * item.product.price }}</td>
-            </tr>
-        {% endfor %}
-        <tr>
-            <td colspan="3">Total</td>
-            <td>{{ total }}</td>
-        </tr>
-    </table>
-</div>
+        {% if items|length > 0 %}
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="glass-panel p-4">
+                        {% for item in items %}
+                            <div class="cart-item py-4 d-flex align-items-center justify-content-between flex-wrap">
+                                <div class="d-flex align-items-center gap-4">
+                                    {# Image ou Placeholder #}
+                                    <div class="rounded-3 overflow-hidden border border-secondary" style="width: 80px; height: 80px;">
+                                        {% if item.product.media|first %}
+                                            <img src="{{ asset('/uploads/media/' ~ item.product.media|first.path) }}" class="w-100 h-100 object-fit-cover">
+                                        {% else %}
+                                            <div class="bg-dark w-100 h-100 d-flex align-items-center justify-content-center">
+                                                <i class="fas fa-star text-secondary"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div>
+                                        <h5 class="mb-1 fw-bold">{{ item.product.name }}</h5>
+                                        <p class="small text-light-emphasis mb-0">{{ item.product.priceHT|number_format(2, ',', ' ') }} € / unité</p>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex align-items-center gap-5 mt-3 mt-sm-0">
+                                    {# Sélecteur de Quantité #}
+                                    <div class="d-flex align-items-center gap-3">
+                                        <a href="{{ path('cart_decrease', {id: item.product.id}) }}" class="qty-btn">-</a>
+                                        <span class="fw-bold">{{ item.quantity }}</span>
+                                        <a href="{{ path('cart_add', {id: item.product.id}) }}" class="qty-btn">+</a>
+                                    </div>
+
+                                    {# Sous-total par ligne #}
+                                    <div class="text-end" style="min-width: 100px;">
+                                        <span class="fw-bold">{{ (item.product.priceHT * item.quantity)|number_format(2, ',', ' ') }} €</span>
+                                        <a href="{{ path('cart_remove', {id: item.product.id}) }}" class="d-block small text-danger text-decoration-none mt-1">Supprimer</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="glass-panel p-4 sticky-top" style="top: 20px;">
+                        <h4 class="fw-bold mb-4">Résumé</h4>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-light-emphasis">Sous-total</span>
+                            <span>{{ total|number_format(2, ',', ' ') }} €</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="text-light-emphasis">Livraison</span>
+                            <span>15,00 €</span>
+                        </div>
+
+                        <hr class="border-secondary">
+
+                        <div class="d-flex justify-content-between align-items-end mb-4">
+                            <span class="fw-bold">Total TTC</span>
+                            <span class="summary-total">{{ (total + 15)|number_format(2, ',', ' ') }} €</span>
+                        </div>
+
+                        <a href="{{ path('cart_checkout') }}" class="btn btn-checkout w-100 mb-3">
+                            Passer à la commande
+                        </a>
+
+                        <p class="small text-center text-light-emphasis">
+                            <i class="fas fa-shield-alt me-2"></i>Paiement sécurisé par la force stellaire
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            {# --- PANIER VIDE --- #}
+            <div class="glass-panel p-5 text-center">
+                <i class="fas fa-rocket fa-4x mb-4 text-secondary"></i>
+                <h2 class="h4">Votre panier est dans le vide sidéral...</h2>
+                <p class="text-light-emphasis mb-4">Il semble que vous n'ayez pas encore ajouté d'équipement à votre cargaison.</p>
+                <a href="{{ path('catalog_index') }}" class="btn btn-outline-info">Retourner au catalogue</a>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

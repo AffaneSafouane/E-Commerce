@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ category.name }}
+{% endblock %}
+
+{% block body %}
+    <section class="mb-4">
+        <h1 class="display-6 fw-bold text-light">{{ category.name }}</h1>
+    </section>
+
+    <section>
+        <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-xl-3">
+            {% for product in category.products %}
+                <div class="col d-flex">
+                    <article class="card bg-dark text-light border-secondary-subtle h-100 w-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <h2 class="h5 card-title fw-bold mb-2">
+                                <a href="{{ path('catalog_product', { id: product.id }) }}" class="text-light text-decoration-none">
+                                    {{ product.name }}
+                                </a>
+                            </h2>
+
+                            <p class="card-text text-light-emphasis mb-3 flex-grow-1">
+                                {{ product.description|length > 140 ? product.description|striptags|slice(0, 140) ~ '...' : product.description|striptags }}
+                            </p>
+
+                            <p class="fs-5 fw-semibold mb-3">{{ product.priceHT|number_format(2, ',', ' ') }} €</p>
+
+                            <div class="d-flex gap-2 mt-auto">
+                                <a class="btn btn-outline-light w-50" href="{{ path('catalog_product', { id: product.id }) }}">
+                                    Détails
+                                </a>
+                                <a class="btn btn-outline-info w-50" href="{{ path('cart_add', { id: product.id }) }}">
+                                    Panier
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-dark border border-secondary-subtle mb-0" role="alert">
+                        Aucun produit disponible dans cette catégorie pour le moment.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

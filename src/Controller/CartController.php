@@ -28,4 +28,33 @@ final class CartController extends AbstractController
 
         return $this->render('cart/success.html.twig');
     }
+
+    #[Route('/cart/add/{id}', name: 'cart_add')]
+    public function add(int $id, CartService $cartService): Response
+    {
+        $cartService->add($id);
+
+        $this->addFlash('success', 'Article ajouté au panier !');
+
+        // Redirect back to the cart page to see the update
+        return $this->redirectToRoute('app_cart');
+    }
+
+    #[Route('/cart/decrease/{id}', name: 'cart_decrease')]
+    public function decrease(int $id, CartService $cartService): Response
+    {
+        $cartService->decrease($id);
+
+        return $this->redirectToRoute('app_cart');
+    }
+
+    #[Route('/cart/remove/{id}', name: 'cart_remove')]
+    public function remove(int $id, CartService $cartService): Response
+    {
+        $cartService->remove($id);
+
+        $this->addFlash('info', 'Article retiré du panier.');
+
+        return $this->redirectToRoute('app_cart');
+    }
 }

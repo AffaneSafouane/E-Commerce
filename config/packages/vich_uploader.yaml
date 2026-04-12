@@ -1,0 +1,20 @@
+vich_uploader:
+    db_driver: orm
+
+    mappings:
+        # This key MUST match the "mapping" name in your Entity attribute
+        media_images:
+            # The URL prefix (e.g., https://your-site.com/uploads/media/...)
+            uri_prefix: /uploads/media
+            
+            # The physical path on your server where files will be saved
+            upload_destination: '%kernel.project_dir%/public/uploads/media'
+            
+            # Optional: automatically delete the file from the disk when the entity is deleted
+            delete_on_remove: true
+            
+            # Optional: delete the old file when a new one is uploaded
+            delete_on_update: true
+            
+            # Optional: gives the file a unique name (highly recommended)
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer

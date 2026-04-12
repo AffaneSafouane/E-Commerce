@@ -1,24 +1,199 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Look Up !{% endblock %}
+{% block title %}
+    Look Up - Accueil
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .space-backdrop {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background:
+                radial-gradient(circle at 14% 20%, rgba(124, 238, 255, 0.18), transparent 36%),
+                radial-gradient(circle at 86% 4%, rgba(255, 211, 120, 0.18), transparent 30%),
+                linear-gradient(145deg, #031223 0%, #0b2238 48%, #184a72 100%);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.36);
+        }
+
+        .space-backdrop::before,
+        .space-backdrop::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .space-backdrop::before {
+            width: 24rem;
+            height: 24rem;
+            right: -10rem;
+            top: -11rem;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.24), transparent 65%);
+        }
+
+        .space-backdrop::after {
+            width: 15rem;
+            height: 15rem;
+            left: -6rem;
+            bottom: -7rem;
+            background: radial-gradient(circle, rgba(124, 238, 255, 0.28), transparent 70%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-subtitle {
+            max-width: 60ch;
+            color: rgba(241, 248, 255, 0.9);
+            font-size: clamp(1rem, 1.8vw, 1.3rem);
+        }
+
+        .section-title {
+            letter-spacing: 0.03em;
+        }
+
+        .glass-ring {
+            border: 1px solid rgba(154, 217, 255, 0.26);
+            background: linear-gradient(145deg, rgba(9, 25, 44, 0.74), rgba(18, 44, 70, 0.6));
+            backdrop-filter: blur(8px);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .univers-scroll {
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(154, 217, 255, 0.45) transparent;
+        }
+
+        .univers-track {
+            display: flex;
+            gap: 0.9rem;
+            min-width: max-content;
+            padding-bottom: 0.35rem;
+        }
+
+        .univers-card {
+            width: 160px;
+            min-height: 160px;
+            border-radius: 1.35rem;
+            text-decoration: none;
+            color: #f2f7ff;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .univers-card:hover,
+        .univers-card:focus-visible {
+            transform: translateY(-3px) scale(1.01);
+            border-color: rgba(154, 217, 255, 0.5);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 16px 32px rgba(0, 0, 0, 0.38);
+            color: #ffffff;
+        }
+
+        .univers-name {
+            font-size: 0.95rem;
+            line-height: 1.3;
+        }
+
+        .latest-card {
+            border-radius: 1rem;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .latest-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(154, 217, 255, 0.42);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .badge-new {
+            letter-spacing: 0.06em;
+            background: linear-gradient(90deg, #89ecff 0%, #ffd28a 100%);
+            color: #072038;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
     {% for message in app.flashes('success') %}
         <div class="alert alert-success">{{ message }}</div>
     {% endfor %}
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/mnt/shared/Saf/L3Pro/TP/PHP/e-boutique/src/Controller/HomeController.php</code></li>
-        <li>Your template at <code>/mnt/shared/Saf/L3Pro/TP/PHP/e-boutique/templates/home/index.html.twig</code></li>
-    </ul>
-</div>
+    <section class="space-backdrop p-4 p-md-5 p-xl-6 text-light">
+        <div class="hero-content py-3 py-md-4">
+            <p class="text-uppercase fw-semibold small mb-3" style="letter-spacing: 0.14em; color: #9ad9ff;">Look Up Astronomy Store</p>
+            <h1 class="display-2 fw-bold lh-1 mb-4">Le ciel n'attend que vous.</h1>
+            <p class="hero-subtitle mb-4 mb-md-5">
+                Explorez le cosmos, équipez vos nuits d'observation et découvrez des instruments conçus pour aller plus loin, planète après planète.
+            </p>
+
+            <a class="btn btn-lg btn-info px-5 py-3 fw-bold" href="{{ path('catalog_index') }}">
+                Explorer le Catalogue
+            </a>
+        </div>
+    </section>
+
+    <section class="mt-5">
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <h2 class="section-title h3 fw-bold text-light mb-0">Nos Univers</h2>
+            <span class="small text-light-emphasis">Catégories populaires</span>
+        </div>
+
+        <div class="univers-scroll">
+            <div class="univers-track">
+                {% for category in categories %}
+                    <a class="univers-card glass-ring d-flex flex-column justify-content-center align-items-center text-center p-3" href="{{ path('catalog_category', { id: category.id }) }}">
+                        <span class="text-uppercase small fw-semibold mb-2" style="letter-spacing: 0.08em; color: #9ad9ff;">Univers</span>
+                        <span class="univers-name fw-bold">{{ category.name }}</span>
+                    </a>
+                {% else %}
+                    <div class="alert alert-dark border border-secondary-subtle mb-0 w-100" role="alert">
+                        Les catégories seront bientôt disponibles.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-5 pb-2">
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <h2 class="section-title h3 fw-bold text-light mb-0">Nouveautés</h2>
+            <span class="small text-light-emphasis">Les dernières arrivées</span>
+        </div>
+
+        <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-xl-3">
+            {% for product in latest_products %}
+                <div class="col d-flex">
+                    <article class="latest-card glass-ring p-4 d-flex flex-column text-light w-100">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <h3 class="h5 fw-bold mb-0">{{ product.name }}</h3>
+                            <span class="badge badge-new text-uppercase fw-bold">New</span>
+                        </div>
+
+                        <p class="text-light-emphasis mb-3 flex-grow-1">
+                            {{ product.description|length > 130 ? product.description|striptags|slice(0, 130) ~ '...' : product.description|striptags }}
+                        </p>
+
+                        <p class="fs-5 fw-semibold mb-3">{{ product.priceHT|number_format(2, ',', ' ') }} €</p>
+
+                        <div class="d-flex gap-2 mt-auto">
+                            <a class="btn btn-outline-light w-50" href="{{ path('catalog_product', { id: product.id }) }}">Détails</a>
+                            <a class="btn btn-outline-info w-50" href="{{ path('cart_add', { id: product.id }) }}">Panier</a>
+                        </div>
+                    </article>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-dark border border-secondary-subtle mb-0" role="alert">
+                        Aucune nouveauté n'est disponible pour le moment.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
 {% endblock %}

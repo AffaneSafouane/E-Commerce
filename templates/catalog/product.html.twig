@@ -1,0 +1,200 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ product.name }} | Look Up
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .space-backdrop {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.25rem;
+            background:
+            radial-gradient(circle at 15% 20%, rgba(124, 238, 255, 0.18), transparent 38%),
+            radial-gradient(circle at 85% 0%, rgba(255, 211, 120, 0.2), transparent 28%),
+            linear-gradient(140deg, #031223 0%, #081b2f 45%, #122f4b 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+        }
+
+        .space-backdrop::before,
+        .space-backdrop::after {
+            content: '';
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+            opacity: 0.45;
+        }
+
+        .space-backdrop::before {
+            width: 26rem;
+            height: 26rem;
+            right: -10rem;
+            top: -12rem;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.28), transparent 62%);
+        }
+
+        .space-backdrop::after {
+            width: 16rem;
+            height: 16rem;
+            left: -6rem;
+            bottom: -8rem;
+            background: radial-gradient(circle, rgba(124, 238, 255, 0.28), transparent 68%);
+        }
+
+        .product-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            /* Changed to 1fr 1fr to split exactly in half */
+            grid-template-columns: 1fr 1fr; 
+            gap: 2.5rem;
+            padding: 2.5rem;
+            align-items: start;
+        }
+
+        /* Added a flex layout for the right column to space out the text and price */
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            height: 100%;
+        }
+
+        .astro-kicker {
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 0.78rem;
+            color: #8ed4ff;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+        }
+
+        .astro-title {
+            font-size: clamp(1.9rem, 4vw, 2.8rem);
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        .astro-description {
+            color: rgba(241, 248, 255, 0.86);
+            line-height: 1.7;
+            margin-bottom: 0;
+            white-space: pre-line;
+        }
+
+        .price-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 1rem;
+            background: rgba(6, 19, 34, 0.68);
+            border: 1px solid rgba(142, 212, 255, 0.2);
+            padding: 1.6rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .price-label {
+            margin: 0;
+            color: #b8dfff;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.74rem;
+            font-weight: 700;
+        }
+
+        .price-value {
+            font-size: clamp(2rem, 5vw, 2.7rem);
+            margin: 0.2rem 0 1.3rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .price-note {
+            color: rgba(184, 223, 255, 0.85);
+            font-size: 0.9rem;
+            margin-bottom: 1.3rem;
+        }
+
+        .btn-astro {
+            display: inline-block;
+            border: 0;
+            border-radius: 0.7rem;
+            text-decoration: none;
+            text-align: center;
+            background: linear-gradient(90deg, #7ceeff 0%, #ffe08c 100%);
+            color: #072038;
+            font-weight: 800;
+            padding: 0.8rem 1.15rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .btn-astro:hover,
+        .btn-astro:focus-visible {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 24px rgba(0, 0, 0, 0.35);
+            color: #031223;
+        }
+
+        /* Mobile Responsive Breakpoint */
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: 1fr; /* Stacks everything into 1 column */
+                gap: 1.5rem;
+                padding: 1.6rem;
+            }
+
+            .price-panel {
+                min-height: 0;
+                margin-top: 0;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <section class="space-backdrop text-light">
+        <div class="product-grid">
+            
+            <div class="product-image">
+                {% set productMedia = product.media|first %}
+                {% if productMedia %}
+                    <img src="{{ asset('/uploads/media/' ~ productMedia.path) }}"
+                        alt="{{ productMedia.alt ?: product.name }}"
+                        class="img-fluid rounded-4 shadow-lg w-100"
+                        style="border: 1px solid rgba(142, 212, 255, 0.2); object-fit: cover;">
+                {% else %}
+                    <div class="rounded-4 bg-dark d-flex align-items-center justify-content-center border border-secondary w-100" style="aspect-ratio: 1; border: 1px solid rgba(142, 212, 255, 0.2) !important;">
+                        <span class="text-secondary">Pas d'image</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="product-info">
+                <div class="text-content">
+                    <p class="astro-kicker">Observation Collection</p>
+                    <h1 class="astro-title">{{ product.name }}</h1>
+                    <p class="astro-description">
+                        {{ product.description ? product.description|striptags : 'Ce produit d\'astronomie est prêt à rejoindre votre prochaine session d\'observation.' }}
+                    </p>
+                </div>
+
+                <aside class="price-panel">
+                    <div>
+                        <p class="price-label">Prix</p>
+                        <p class="price-value">{{ product.priceHT|number_format(2, ',', ' ') }} €</p>
+                        <p class="price-note">Expédition rapide et soignée vers toute la France.</p>
+                    </div>
+
+                    <a class="btn-astro" href="{{ path('cart_add', { id: product.id }) }}">
+                        Ajouter au panier
+                    </a>
+                </aside>
+            </div>
+
+        </div>
+    </section>
+{% endblock %}

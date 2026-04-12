@@ -4,9 +4,8 @@
     Profil
 {% endblock %}
 
-{% block body %}
-    <a href="javascript:history.back()"><- Retour</a>
-    <h1>Profil</h1>
+{% block body %}    
+    <h1 class="mt-3">Profil</h1>
 
     {% for message in app.flashes('success') %}
         <div class="alert alert-success">{{ message }}</div>
@@ -67,8 +66,12 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_profil_edit') }}">Modifier</a>
-    <a href="{{ path('app_change_password') }}">Modifier mot de passe</a>
+    <div class="d-flex justify-content-between">
+        <a href="{{ path('app_profil_edit') }}" class="btn btn-warning">Modifier</a>
+        <a href="{{ path('app_change_password') }}" class="btn btn-warning">Modifier mot de passe</a>
 
-    {{ include('profil/_delete_form.html.twig') }}
+        <div class="delete-form-wrapper">
+            {{ include('profil/_delete_form.html.twig') }}
+        </div>
+    </div>
 {% endblock %}

@@ -42,7 +42,7 @@ class Product
     /**
      * @var Collection<int, Media>
      */
-    #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'product')]
+    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'products', cascade: ['persist'])]
     private Collection $media;
 
     /**
@@ -159,7 +159,7 @@ class Product
     {
         if (!$this->media->contains($medium)) {
             $this->media->add($medium);
-            $medium->setProduct($this);
+            $medium->addProduct($this);
         }
 
         return $this;
@@ -169,8 +169,8 @@ class Product
     {
         if ($this->media->removeElement($medium)) {
             // set the owning side to null (unless already changed)
-            if ($medium->getProduct() === $this) {
-                $medium->setProduct(null);
+            if ($medium->getProducts()->contains($this)) {
+                $medium->removeProduct($this);
             }
         }
 
@@ -205,5 +205,19 @@ class Product
         }
 
         return $this;
+    }
+
+    /**
+     * Get the path of the first PHOTO media, or a placeholder image if none exists.
+     */
+    public function getFirstPhotoPath(): ?string
+    {
+        foreach ($this->media as $medium) {
+            if ($medium->getType() === \App\Enum\MediaType::PHOTO) {
+                return '/uploads/media/' . $medium->getPath();
+            }
+        }
+
+        return '/images/placeholder.webp';
     }
 }
