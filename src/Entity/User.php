@@ -146,7 +146,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
 
         return $data;
     }
@@ -190,9 +190,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, CustomerAddress>
      */
-    public function getCustomerAddresses(): Collection
+    public function getDeliveryAddress(): ?CustomerAddress
     {
-        return $this->customerAddresses;
+        foreach ($this->customerAddresses as $address) {
+            if ($address->getIsDelivery()) {
+                return $address;
+            }
+        }
+        return null;
+    }
+
+    public function getBillingAddress(): ?CustomerAddress
+    {
+        foreach ($this->customerAddresses as $address) {
+            if ($address->getIsBilling()) {
+                return $address;
+            }
+        }
+        return null;
     }
 
     public function addCustomerAddress(CustomerAddress $customerAddress): static

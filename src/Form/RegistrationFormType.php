@@ -79,8 +79,8 @@ class RegistrationFormType extends AbstractType
                 'required' => false,
                 'constraints' => [
                     new Regex(
-                        pattern: '/^\+33[1-9][0-9]{8}$/',
-                        message: 'Veuillez entrer un numéro de téléphone français valide commençant par +33 (ex: +33612345678).',
+                        pattern: '/^\+(?!330)[1-9]\d{7,14}$/',
+                        message: 'Veuillez entrer un numéro de téléphone valide commençant par un code international (ex: +33612345678).',
                     )
                 ],
                 'attr' => [

@@ -33,8 +33,8 @@ class CustomerAddressType extends AbstractType
                 'constraints' => [
                     new NotBlank(message: 'Veuillez entrer un numéro de téléphone pour la livraison'),
                     new Regex(
-                        pattern: '/^\+[1-9]\d{7,12}$/',
-                        message: 'Veuillez entrer un numéro de téléphone valide'
+                        pattern: '/^\+(?!330)[1-9]\d{7,14}$/',
+                        message: 'Veuillez entrer un numéro de téléphone valide commençant par un code international (ex: +33612345678).',
                     )
                 ],
                 'label' => 'Téléphone',
@@ -58,6 +58,10 @@ class CustomerAddressType extends AbstractType
                         minMessage: 'Votre code postal doit contenir au moins {{ limit }} caractères.',
                         max: 5,
                         maxMessage: 'Votre code postal doit contenir au plus {{ limit }} caractères.',
+                    ),
+                    new Regex(
+                        pattern: '/^\d+$/',
+                        message: 'Votre code postal doit contenir uniquement des chiffres.'
                     )
                 ],
             ])

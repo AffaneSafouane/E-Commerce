@@ -11,6 +11,10 @@
 <div class="example-wrapper">
     <h1>Hello {{ controller_name }}! ✅</h1>
 
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
     This friendly message is coming from:
     <ul>
         <li>Your controller at <code>/mnt/shared/Saf/L3Pro/TP/PHP/e-boutique/src/Controller/HomeController.php</code></li>

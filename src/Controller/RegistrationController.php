@@ -23,32 +23,30 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var CustomerAddress $deliveryAddress */
-            $deliveryAddress = $form->get('deliveryAddress')->getData();
-            $deliveryAddress->setUserAccount($user);
-            $deliveryAddress->setIsDelivery(true);
+            /** @var CustomerAddress $delivery */
+            $delivery = $form->get('deliveryAddress')->getData();
+            $delivery->setUserAccount($user);
+            $delivery->setIsDelivery(true);
 
             $isSameAsDelivery = $form->get('sameAsDelivery')->getData();
-            /** @var CustomerAddress $billingAddress */
-            $billingAddress = $form->get('billingAddress')->getData();
 
-            if ($isSameAsDelivery === true || ($billingAddress === null || $billingAddress->getCity() === null)) {
-                $deliveryAddress->setIsBilling(true);
-                $entityManager->persist($deliveryAddress);
+            /** @var CustomerAddress $billing */
+            $billing = $form->get('billingAddress')->getData();
+
+            if (!$isSameAsDelivery && $billing && $billing !== $delivery) {
+                // They are different: Delivery is ONLY delivery
+                $delivery->setIsBilling(false);
+
+                $billing->setUserAccount($user);
+                $billing->setIsBilling(true);
+                $billing->setIsDelivery(false);
+                $entityManager->persist($billing);
             } else {
-                $deliveryAddress->setIsBilling(false);
-                $entityManager->persist($deliveryAddress);
-
-                $billingAddress = $form->get('billingAddress')->getData();
-
-                if ($billingAddress && $billingAddress->getCity() !== null) {
-                    $billingAddress->setUserAccount($user);
-                    $billingAddress->setIsDelivery(false);
-                    $billingAddress->setIsBilling(true);
-
-                    $entityManager->persist($billingAddress);
-                }
+                // They are the same: Delivery is BOTH
+                $delivery->setIsBilling(true);
             }
+
+            $entityManager->persist($delivery);
 
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
@@ -59,7 +57,7 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->addFlash('success','Votre compte a bien été créé');
+            $this->addFlash('success', 'Votre compte a bien été créé');
 
             return $security->login($user, 'form_login', 'main');
         }

@@ -5,14 +5,15 @@
 {% endblock %}
 
 {% block body %}
+    <a href="javascript:history.back()"><- Retour</a>
     <h1>Profil</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ user.id }}</td>
-            </tr>
             <tr>
                 <th>Email</th>
                 <td>{{ user.email }}</td>
@@ -22,10 +23,6 @@
                 <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
             </tr>
             <tr>
-                <th>Password</th>
-                <td>{{ user.password }}</td>
-            </tr>
-            <tr>
                 <th>Name</th>
                 <td>{{ user.name }}</td>
             </tr>
@@ -33,39 +30,42 @@
                 <th>FirstName</th>
                 <td>{{ user.firstName }}</td>
             </tr>
-            {{ if user.phone is not null }}
-            <tr>
-                <th>Phone</th>
-                <td>{{ user.phone }}</td>
-            </tr>
-            {{ endif }}
+            {% if user.phone is not null %}
+                <tr>
+                    <th>Phone</th>
+                    <td>{{ user.phone }}</td>
+                </tr>
+            {% endif %}
             <tr>
                 <th>Adresse de livraison</th>
                 <td>
-                    {% if user.deliveryAddress %}
-                        {{ user.deliveryAddress.firstName }} {{ user.deliveryAddress.name }}<br>
-                        {{ user.deliveryAddress.address }}<br>
-                        {{ user.deliveryAddress.cp }} {{ user.deliveryAddress.city }}
+                    {% set delivery = user.deliveryAddress %}
+                    {% if delivery %}
+                        <strong>{{ delivery.name }}</strong><br>
+                        {{ delivery.address }}<br>
+                        {{ delivery.postalCode }} {{ delivery.city }}
                     {% else %}
-                        <span class="text-muted">Aucune adresse de livraison renseignée.</span>
+                        <span class="text-muted">Aucune adresse de livraison.</span>
                     {% endif %}
                 </td>
             </tr>
             <tr>
                 <th>Adresse de facturation</th>
                 <td>
-                    {% if user.billingAddress %}
-                        {{ user.billingAddress.address }}<br>
-                        {{ user.billingAddress.city }}
+                    {% set billing = user.billingAddress %}
+                    {% set delivery = user.deliveryAddress %}
+
+                    {% if billing.id == delivery.id %}
+                        <span class="text-muted">Identique à la livraison.</span>
                     {% else %}
-                        <span class="text-muted">Identique à la livraison (ou non renseignée).</span>
+                        <strong>{{ billing.name }}</strong><br>
+                        {{ billing.address }}<br>
+                        {{ billing.postalCode }} {{ billing.city }}
                     {% endif %}
                 </td>
             </tr>
         </tbody>
     </table>
-
-    <a href="javascript:history.back()">Retour</a>
 
     <a href="{{ path('app_profil_edit') }}">Modifier</a>
     <a href="{{ path('app_change_password') }}">Modifier mot de passe</a>

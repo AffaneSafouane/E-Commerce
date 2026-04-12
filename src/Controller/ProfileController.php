@@ -29,14 +29,78 @@ final class ProfileController extends AbstractController
     #[Route('/edit', name: 'app_profil_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, EntityManagerInterface $entityManager): Response
     {
+        /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
+        // 1. Fetch current addresses
+        $currentDelivery = $user->getDeliveryAddress();
+        $currentBilling = $user->getBillingAddress();
+
+        // Determine if they are currently sharing the same address object
+        $isSameAsDelivery = false;
+        if ($currentDelivery && $currentBilling && $currentDelivery->getId() === $currentBilling->getId()) {
+            $isSameAsDelivery = true;
+        } elseif (!$currentBilling && $currentDelivery) {
+            // Fallback: if they only have delivery, assume it's also billing
+            $isSameAsDelivery = true;
+        }
+
         $form = $this->createForm(ProfileType::class, $user);
+
+        // 2. Pre-fill the unmapped fields BEFORE handling the request
+        if ($currentDelivery) {
+            $form->get('deliveryAddress')->setData($currentDelivery);
+        }
+        if ($currentBilling && !$isSameAsDelivery) {
+            $form->get('billingAddress')->setData($currentBilling);
+        }
+        $form->get('sameAsDelivery')->setData($isSameAsDelivery);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush(); 
-            
+
+            // 3. Extract the submitted unmapped data
+            $delivery = $form->get('deliveryAddress')->getData();
+            $billing = $form->get('billingAddress')->getData();
+            $sameAsDeliverySubmitted = $form->get('sameAsDelivery')->getData();
+
+            // Link delivery address to user if it's brand new
+            if ($delivery && !$user->getDeliveryAddress() === $delivery) {
+                $delivery->setUserAccount($user);
+                $user->addCustomerAddress($delivery);
+            }
+            $delivery->setIsDelivery(true);
+
+            // Handle the Billing logic
+            if ($sameAsDeliverySubmitted) {
+                // They checked the box: Delivery is BOTH
+                $delivery->setIsBilling(true);
+
+                // Clean up: If they previously had a separate billing address, remove it
+                if ($currentBilling && $currentBilling->getId() !== $delivery->getId()) {
+                    $user->removeCustomerAddress($currentBilling);
+                    $entityManager->remove($currentBilling);
+                }
+            } else {
+                // They unchecked the box: Delivery is ONLY delivery
+                $delivery->setIsBilling(false);
+
+                if ($billing) {
+                    // Link billing address to user if it's brand new
+                    if (!$user->getBillingAddress() === $billing) {
+                        $billing->setUserAccount($user);
+                        $user->addCustomerAddress($billing);
+                    }
+                    $billing->setIsBilling(true);
+                    $billing->setIsDelivery(false);
+                    $entityManager->persist($billing);
+                }
+            }
+
+            $entityManager->persist($delivery);
+            $entityManager->flush();
+
             $this->addFlash('success', 'Votre profil a bien été mis à jour.');
             return $this->redirectToRoute('app_profil_show');
         }
@@ -46,7 +110,7 @@ final class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profil/password', name: 'app_change_password')]
+    #[Route('/password', name: 'app_change_password')]
     public function changePassword(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): Response
     {
         /** @var \App\Entity\User $user */
@@ -77,7 +141,7 @@ final class ProfileController extends AbstractController
         /** @var \App\Entity\User $user */
         $user = $this->getUser();
 
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($user);
             $entityManager->flush();
         }

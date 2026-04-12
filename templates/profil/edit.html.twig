@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier profil{% endblock %}
+{% block title %}
+    Modifier profil
+{% endblock %}
 
 {% block body %}
     <h1>Modifier profil</h1>
@@ -10,4 +12,25 @@
     <a href="{{ path('app_profil_show') }}">Retour au profil</a>
 
     {{ include('profil/_delete_form.html.twig') }}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sameAsDeliveryCheckbox = document.getElementById('profile_sameAsDelivery');
+
+            const billingAddressContainer = document.getElementById('billing-address-container');
+
+            function toggleBillingAddressFields() {
+                if (sameAsDeliveryCheckbox.checked) {
+                    billingAddressContainer.style.display = 'none';
+                    } else {
+                    billingAddressContainer.style.display = 'block';
+                }
+            }
+
+            if (sameAsDeliveryCheckbox) {
+                toggleBillingAddressFields();
+                sameAsDeliveryCheckbox.addEventListener('change', toggleBillingAddressFields);
+            }
+        });
+    </script>
 {% endblock %}
