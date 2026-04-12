@@ -51,10 +51,4 @@ class DashboardController extends AbstractDashboardController
             ->setPageTitle('index', '%entity_label_plural% Listing')
             ->setPaginatorPageSize(10);
     }
-
-    public function configureAssets(): Assets
-    {
-        return parent::configureAssets()
-            ->addJsFile('js/admin.js');
-    }
 }

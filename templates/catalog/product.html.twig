@@ -49,7 +49,7 @@
             z-index: 1;
             display: grid;
             /* Changed to 1fr 1fr to split exactly in half */
-            grid-template-columns: 1fr 1fr; 
+            grid-template-columns: 1fr 1fr;
             gap: 2.5rem;
             padding: 2.5rem;
             align-items: start;
@@ -158,43 +158,45 @@
 {% block body %}
     <section class="space-backdrop text-light">
         <div class="product-grid">
-            
+
             <div class="product-image">
                 {% set productMedia = product.media|first %}
                 {% if productMedia %}
-                    <img src="{{ asset('/uploads/media/' ~ productMedia.path) }}"
+                    {% set imgSrc = productMedia.path starts with 'http' ? productMedia.path : asset('uploads/media/' ~ productMedia.path) %}
+
+                    <img src="{{ imgSrc }}"
                         alt="{{ productMedia.alt ?: product.name }}"
                         class="img-fluid rounded-4 shadow-lg w-100"
                         style="border: 1px solid rgba(142, 212, 255, 0.2); object-fit: cover;">
-                {% else %}
-                    <div class="rounded-4 bg-dark d-flex align-items-center justify-content-center border border-secondary w-100" style="aspect-ratio: 1; border: 1px solid rgba(142, 212, 255, 0.2) !important;">
-                        <span class="text-secondary">Pas d'image</span>
-                    </div>
-                {% endif %}
-            </div>
-
-            <div class="product-info">
-                <div class="text-content">
-                    <p class="astro-kicker">Observation Collection</p>
-                    <h1 class="astro-title">{{ product.name }}</h1>
-                    <p class="astro-description">
-                        {{ product.description ? product.description|striptags : 'Ce produit d\'astronomie est prêt à rejoindre votre prochaine session d\'observation.' }}
-                    </p>
+                    {% else %}
+                        <div class="rounded-4 bg-dark d-flex align-items-center justify-content-center border border-secondary w-100" style="aspect-ratio: 1; border: 1px solid rgba(142, 212, 255, 0.2) !important;">
+                            <span class="text-secondary">Pas d'image</span>
+                        </div>
+                    {% endif %}
                 </div>
 
-                <aside class="price-panel">
-                    <div>
-                        <p class="price-label">Prix</p>
-                        <p class="price-value">{{ product.priceHT|number_format(2, ',', ' ') }} €</p>
-                        <p class="price-note">Expédition rapide et soignée vers toute la France.</p>
+                <div class="product-info">
+                    <div class="text-content">
+                        <p class="astro-kicker">Observation Collection</p>
+                        <h1 class="astro-title">{{ product.name }}</h1>
+                        <p class="astro-description">
+                            {{ product.description ? product.description|striptags : 'Ce produit d\'astronomie est prêt à rejoindre votre prochaine session d\'observation.' }}
+                        </p>
                     </div>
 
-                    <a class="btn-astro" href="{{ path('cart_add', { id: product.id }) }}">
-                        Ajouter au panier
-                    </a>
-                </aside>
-            </div>
+                    <aside class="price-panel">
+                        <div>
+                            <p class="price-label">Prix</p>
+                            <p class="price-value">{{ product.priceHT|number_format(2, ',', ' ') }} €</p>
+                            <p class="price-note">Expédition rapide et soignée vers toute la France.</p>
+                        </div>
 
-        </div>
-    </section>
-{% endblock %}
+                        <a class="btn-astro" href="{{ path('cart_add', { id: product.id }) }}">
+                            Ajouter au panier
+                        </a>
+                    </aside>
+                </div>
+
+            </div>
+        </section>
+    {% endblock %}

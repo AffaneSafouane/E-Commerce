@@ -190,6 +190,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, CustomerAddress>
      */
+    public function getCustomerAddresses(): Collection
+    {
+        return $this->customerAddresses;
+    }
+
+    /**
+     * @return Collection<int, CustomerAddress>
+     */
     public function getDeliveryAddress(): ?CustomerAddress
     {
         foreach ($this->customerAddresses as $address) {

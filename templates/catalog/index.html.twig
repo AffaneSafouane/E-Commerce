@@ -87,7 +87,9 @@
                     <article class="category-card p-4 d-flex flex-column w-100 text-light">
                         {% set mainMedia = category.media|first %}
                         {% if mainMedia %}
-                            <img src="{{ asset('/uploads/media/' ~ mainMedia.path) }}"
+                            {% set imgSrc = mainMedia.path starts with 'http' ? mainMedia.path : asset('uploads/media/' ~ mainMedia.path) %}
+
+                            <img src="{{ imgSrc }}"
                                 alt="{{ mainMedia.alt ?: category.name }}"
                                 class="w-100"
                                 style="height: 200px; object-fit: cover; border-bottom: 1px solid rgba(173, 220, 255, 0.14);">

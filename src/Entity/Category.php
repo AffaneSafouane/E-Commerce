@@ -6,6 +6,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
@@ -18,7 +19,7 @@ class Category
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
     /**
@@ -140,10 +141,20 @@ class Category
     {
         foreach ($this->media as $medium) {
             if ($medium->getType() === \App\Enum\MediaType::PHOTO) {
-                return '/uploads/media/' . $medium->getPath();
+                $path = $medium->getPath();
+
+                // Si c'est une image générée par les fixtures (Faker)
+                if (str_starts_with($path, 'http')) {
+                    return $path;
+                }
+
+                // Si c'est un fichier local uploadé via VichUploader
+                // (Assure-toi que '/uploads/media/' correspond bien à ton vich_uploader.yaml)
+                return '/uploads/media/' . $path;
             }
         }
 
+        // Image par défaut si aucun média n'est trouvé
         return '/images/placeholder.webp';
     }
 }
