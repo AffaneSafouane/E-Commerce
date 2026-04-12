@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\CustomerAddress;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,11 +23,13 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var CustomerAddress $deliveryAddress */
             $deliveryAddress = $form->get('deliveryAddress')->getData();
-            $deliveryAddress->setUser($user);
+            $deliveryAddress->setUserAccount($user);
             $deliveryAddress->setIsDelivery(true);
 
             $isSameAsDelivery = $form->get('sameAsDelivery')->getData();
+            /** @var CustomerAddress $billingAddress */
             $billingAddress = $form->get('billingAddress')->getData();
 
             if ($isSameAsDelivery === true || ($billingAddress === null || $billingAddress->getCity() === null)) {
@@ -39,7 +42,7 @@ class RegistrationController extends AbstractController
                 $billingAddress = $form->get('billingAddress')->getData();
 
                 if ($billingAddress && $billingAddress->getCity() !== null) {
-                    $billingAddress->setUser($user);
+                    $billingAddress->setUserAccount($user);
                     $billingAddress->setIsDelivery(false);
                     $billingAddress->setIsBilling(true);
 

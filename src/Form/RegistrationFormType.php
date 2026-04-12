@@ -5,12 +5,15 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\IsTrue;
@@ -85,6 +88,11 @@ class RegistrationFormType extends AbstractType
                 ],
                 'label' => 'Téléphone',
             ])
+            ->add('birthDay', DateType::class, [
+                'widget' => 'single_text',
+                'label' => 'Date de naissance',
+                'required' => false,
+            ])
             ->add('deliveryAddress', CustomerAddressType::class, [
                 'mapped' => false,
                 'label' => 'Adresse de livraison',
@@ -110,6 +118,14 @@ class RegistrationFormType extends AbstractType
                 'label' => 'Conditions d\'utilisations',
             ])
         ;
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $data = $event->getData();
+            if (isset($data['sameAsDelivery']) && $data['sameAsDelivery'] === '1') {
+                // Si "sameAsDelivery" est coché, on copie les données de deliveryAddress dans billingAddress
+                $data['billingAddress'] = $data['deliveryAddress'] ?? null;
+                $event->setData($data);
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

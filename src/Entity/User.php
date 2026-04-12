@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -61,6 +62,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'userAccount', orphanRemoval: true)]
     private Collection $orders;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\LessThanOrEqual(
+        value: '-18 years',
+        message: 'Vous devez avoir au moins 18 ans pour vous inscrire.',
+    )]
+    private ?\DateTime $birthDay = null;
 
     public function __construct()
     {
@@ -235,6 +243,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $order->setUserAccount(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBirthDay(): ?\DateTime
+    {
+        return $this->birthDay;
+    }
+
+    public function setBirthDay(\DateTime $birthDay): static
+    {
+        $this->birthDay = $birthDay;
 
         return $this;
     }
