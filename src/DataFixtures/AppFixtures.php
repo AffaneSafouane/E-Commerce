@@ -19,7 +19,8 @@ class AppFixtures extends Fixture
             'roles' => ['ROLE_ADMIN'],
             'password' => 'admin123',
             'firstName' => 'Admin',
-            'name' => 'LookUp'
+            'name' => 'LookUp',
+            'customerAddresses' => CustomerAddressFactory::new()->many(1), 
         ]);
 
         UserFactory::createOne([
@@ -27,7 +28,8 @@ class AppFixtures extends Fixture
             'roles' => ['ROLE_USER'],
             'password' => 'user123',
             'firstName' => 'Astrid',
-            'name' => 'Nova'
+            'name' => 'Nova',
+            'customerAddresses' => CustomerAddressFactory::new()->many(1), 
         ]);
 
         CategoryFactory::createMany(5, function () {

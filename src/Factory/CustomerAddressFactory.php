@@ -34,14 +34,21 @@ final class CustomerAddressFactory extends PersistentObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'address' => self::faker()->text(255),
-            'city' => self::faker()->text(255),
-            'country' => self::faker()->text(255),
-            'isBilling' => self::faker()->boolean(),
-            'isDelivery' => self::faker()->boolean(),
-            'name' => self::faker()->text(255),
-            'phone' => self::faker()->text(15),
-            'postalCode' => self::faker()->text(255),
+            'address' => self::faker()->streetAddress(),
+
+            'city' => self::faker()->city(),
+
+            'country' => self::faker()->country(),
+
+            'isBilling' => true,
+            'isDelivery' => true,
+
+            'name' => self::faker()->name(),
+
+            'phone' => self::faker()->phoneNumber(),
+
+            'postalCode' => self::faker()->postcode(),
+
             'userAccount' => UserFactory::new(),
         ];
     }

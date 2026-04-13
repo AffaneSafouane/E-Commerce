@@ -1,9 +1,41 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Se connecter !{% endblock %}
+{% block title %}
+    Se connecter !
+{% endblock %}
 
 {% block body %}
     <section class="container py-4 px-4 w-50">
+
+        <div class="card mb-4 border-secondary shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="card-title mb-0">Comptes de Test</h5>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Rôle</th>
+                            <th>Email</th>
+                            <th>Mot de passe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Administrateur</strong></td>
+                            <td><code>admin@lookup.fr</code></td>
+                            <td><code>admin123</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Utilisateur Client</strong></td>
+                            <td><code>user@lookup.fr</code></td>
+                            <td><code>user123</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <form method="post">
             {% if error %}
                 <div class="alert alert-danger mb-3">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -26,16 +58,17 @@
                 <label for="password">Mot de passe</label>
                 <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" required>
             </div>
+
             <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
 
             {#
-                Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-                See https://symfony.com/doc/current/security/remember_me.html
+            Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+            See https://symfony.com/doc/current/security/remember_me.html
 
-                <div class="checkbox mb-3">
-                    <input type="checkbox" name="_remember_me" id="_remember_me">
-                    <label for="_remember_me">Remember me</label>
-                </div>
+            <div class="checkbox mb-3">
+            <input type="checkbox" name="_remember_me" id="_remember_me">
+            <label for="_remember_me">Remember me</label>
+            </div>
             #}
 
             <button class="btn btn-lg btn-primary mt-3 mb-3" type="submit">
